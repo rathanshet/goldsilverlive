@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Capacitor / Native build folders we don't want in git (usually committed, but optional, let's exclude build files)
+# Keep the platforms themselves but exclude their build artifacts
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+ios/App/build/
+ios/App/Pods/
+ios/App/App.xcworkspace/xcuserdata/
+
+# OS files
+.DS_Store
+Thumbs.db

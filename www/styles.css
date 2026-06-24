@@ -1,0 +1,881 @@
+/* Design System for Live Gold & Silver Price Tracker */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Share+Tech+Mono&display=swap');
+
+/* Dynamic Theme Variables */
+:root {
+    /* Light Theme (Default) */
+    --bg-primary: #f5f7fb;
+    --bg-secondary: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.75);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent-gold: #c69320;
+    --accent-gold-hover: #a17615;
+    --accent-silver: #718096;
+    --success: #10b981;
+    --danger: #ef4444;
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    --backdrop-blur: blur(12px);
+    
+    /* Chart Colors */
+    --chart-line-gold: #eab308;
+    --chart-line-silver: #94a3b8;
+    --chart-grid: rgba(0, 0, 0, 0.05);
+    
+    /* Font Families */
+    --font-primary: 'Outfit', sans-serif;
+    --font-serif: 'Playfair Display', serif;
+    --font-mono: 'Share Tech Mono', monospace;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #090d16;
+    --bg-secondary: #0f172a;
+    --bg-card: rgba(15, 23, 42, 0.65);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-gold: #eab308;
+    --accent-gold-hover: #facc15;
+    --accent-silver: #cbd5e1;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --chart-grid: rgba(255, 255, 255, 0.05);
+}
+
+/* Base resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-primary);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* App Container Layout */
+.app-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding: 16px 24px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--glass-shadow);
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 28px;
+    background: linear-gradient(135deg, var(--accent-gold), #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(234, 179, 8, 0.2));
+}
+
+.logo-text {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.logo-text span {
+    color: var(--accent-gold);
+}
+
+/* Control Options */
+.controls-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.market-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.market-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.view-toggle-btn, .theme-toggle-btn {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.view-toggle-btn:hover, .theme-toggle-btn:hover {
+    background: var(--border-color);
+}
+
+/* Modern Dashboard Grid Styles */
+.dashboard-view {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+/* Price Cards Grid */
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.price-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--glass-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.price-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+}
+
+.price-card.gold-24k::before { background: var(--accent-gold); }
+.price-card.gold-22k::before { background: #b8860b; }
+.price-card.silver-999::before { background: var(--accent-silver); }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.metal-badge {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.gold-24k .metal-badge { background: rgba(234, 179, 8, 0.15); color: var(--accent-gold); }
+.gold-22k .metal-badge { background: rgba(184, 134, 11, 0.15); color: #b8860b; }
+.silver-999 .metal-badge { background: rgba(113, 128, 150, 0.15); color: var(--accent-silver); }
+
+.card-icon {
+    font-size: 20px;
+    color: var(--text-secondary);
+}
+
+.price-display {
+    margin-bottom: 12px;
+}
+
+.price-display .price-title {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.price-display .price-val {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    font-family: var(--font-primary);
+}
+
+.price-trend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.trend-up { color: var(--success); }
+.trend-down { color: var(--danger); }
+
+/* Quick Breakdown Table inside Cards */
+.card-breakdown {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.breakdown-row:last-child {
+    margin-bottom: 0;
+}
+
+.breakdown-row span:last-child {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Live Flash Animations for Cards */
+@keyframes flash-green {
+    0% { background-color: rgba(16, 185, 129, 0.25); }
+    100% { background-color: transparent; }
+}
+
+@keyframes flash-red {
+    0% { background-color: rgba(239, 68, 68, 0.25); }
+    100% { background-color: transparent; }
+}
+
+.flash-up {
+    animation: flash-green 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.flash-down {
+    animation: flash-red 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Main Grid: Calculator & Chart */
+.main-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 1024px) {
+    .main-dashboard-grid {
+        grid-template-columns: 1.2fr 0.8fr;
+    }
+}
+
+.panel-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--glass-shadow);
+}
+
+.panel-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-title i {
+    color: var(--accent-gold);
+}
+
+/* SVG Chart Container */
+.chart-container {
+    width: 100%;
+    height: 320px;
+    position: relative;
+}
+
+.chart-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--text-secondary);
+}
+
+/* Price Calculator styles */
+.calc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-prefix {
+    position: absolute;
+    left: 14px;
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+.input-icon-suffix {
+    position: absolute;
+    right: 14px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.calc-input {
+    width: 100%;
+    padding: 12px 14px 12px 36px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    outline: none;
+}
+
+.calc-input:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.15);
+}
+
+.calc-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+}
+
+.calc-select:focus {
+    border-color: var(--accent-gold);
+}
+
+/* Calculator Output Bill */
+.calc-receipt {
+    background: rgba(234, 179, 8, 0.05);
+    border: 1px dashed rgba(234, 179, 8, 0.2);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+.receipt-row:last-child {
+    margin-bottom: 0;
+}
+
+.receipt-total {
+    border-top: 1px dashed var(--border-color);
+    padding-top: 10px;
+    margin-top: 10px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.receipt-total span:last-child {
+    color: var(--accent-gold);
+    font-size: 20px;
+}
+
+/* ==========================================================================
+   CLASSIC BULLION BOARD THEME (Inspired by user's screenshot)
+   ========================================================================== */
+.billboard-view {
+    display: none; /* Controlled by JS toggler */
+    background: radial-gradient(circle, #e2cc85 15%, transparent 16%) 0 0, 
+                radial-gradient(circle, #e2cc85 15%, transparent 16%) 8px 8px;
+    background-size: 16px 16px;
+    background-color: #f7e7c4;
+    border-radius: 20px;
+    padding: 24px;
+    border: 4px double #aa8c2c;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    color: #ffffff;
+}
+
+.billboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #590d0d;
+    padding: 12px 24px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 3px solid #aa8c2c;
+    font-weight: 700;
+}
+
+.billboard-phone {
+    font-family: var(--font-mono);
+    color: #f7e7c4;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+.billboard-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 16px;
+}
+
+@media (min-width: 1024px) {
+    .billboard-layout {
+        grid-template-columns: 1.3fr 0.7fr;
+    }
+}
+
+/* Product list (Left table) */
+.billboard-table-card {
+    background: #6e1515;
+    border: 2px solid #aa8c2c;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.bb-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bb-table th {
+    background: #aa8c2c;
+    color: #590d0d;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 15px;
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.bb-table th:nth-child(2), .bb-table th:nth-child(3), .bb-table th:nth-child(4) {
+    text-align: right;
+}
+
+.bb-table td {
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(170, 140, 44, 0.3);
+    vertical-align: middle;
+}
+
+.bb-table tr:last-child td {
+    border-bottom: none;
+}
+
+.bb-table td:nth-child(1) {
+    color: #ffffff;
+}
+
+.bb-table td:nth-child(2), .bb-table td:nth-child(3) {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    text-align: right;
+}
+
+.bb-table td:nth-child(4) {
+    text-align: right;
+}
+
+.bb-table td.flash-up, .bb-table td.flash-down {
+    animation: none; /* overridden in billboard for custom look */
+}
+
+/* Flashing indicators specifically for billboard */
+@keyframes bb-flash-green {
+    0% { color: #4ade80; text-shadow: 0 0 8px #4ade80; }
+    100% { color: #ffffff; text-shadow: none; }
+}
+
+@keyframes bb-flash-red {
+    0% { color: #f87171; text-shadow: 0 0 8px #f87171; }
+    100% { color: #ffffff; text-shadow: none; }
+}
+
+.bb-flash-up {
+    animation: bb-flash-green 1s ease-out forwards;
+}
+
+.bb-flash-down {
+    animation: bb-flash-red 1s ease-out forwards;
+}
+
+.stock-indicator {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+.stock-indicator.in-stock {
+    color: #4ade80;
+}
+
+.stock-indicator.out-of-stock {
+    color: #f87171;
+}
+
+/* Right Panel Commodity Boxes */
+.commodity-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.commodity-header {
+    background: #aa8c2c;
+    color: #590d0d;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 14px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 4px;
+}
+
+.commodity-header span:last-child {
+    font-size: 12px;
+}
+
+.commodity-card {
+    background: #590d0d;
+    border: 2px solid #aa8c2c;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.commodity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(170, 140, 44, 0.2);
+}
+
+.commodity-item:last-child {
+    border-bottom: none;
+}
+
+.commodity-name {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.commodity-bid-ask {
+    display: flex;
+    gap: 16px;
+}
+
+.bid-ask-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: var(--font-mono);
+}
+
+.bid-ask-box span:first-child {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #e2cc85;
+}
+
+.bid-ask-box span:last-child {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Specific Spot box layout mirroring the green boxes in screenshot */
+.spot-grid-row {
+    background: #590d0d;
+    border: 2px solid #aa8c2c;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.spot-header-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 800;
+    font-size: 13px;
+    color: #e2cc85;
+    border-bottom: 1px solid rgba(170, 140, 44, 0.3);
+    padding-bottom: 4px;
+}
+
+.spot-data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.spot-label {
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.spot-bid-ask-container {
+    display: flex;
+    gap: 10px;
+}
+
+.spot-box {
+    background: #2563eb; /* fallback */
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    text-align: center;
+    min-width: 80px;
+}
+
+.spot-box.green {
+    background: #1e701a;
+    border: 1px solid #4ade80;
+}
+
+.spot-box span:first-child {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.spot-range {
+    font-size: 9px;
+    color: #e2cc85;
+    text-transform: uppercase;
+}
+
+/* Bullet note styles at bottom of billboard */
+.billboard-footer {
+    margin-top: 16px;
+    background: #590d0d;
+    border-radius: 8px;
+    border: 2px solid #aa8c2c;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.bullet-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    color: #f7e7c4;
+}
+
+.bullet-note:last-child {
+    margin-bottom: 0;
+}
+
+.bullet-note i {
+    color: #ffd700;
+}
+
+/* Media optimization for Charts SVG */
+svg.chart-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Chart Tooltip Line styles */
+.chart-hover-line {
+    stroke: var(--text-secondary);
+    stroke-width: 1;
+    stroke-dasharray: 4,4;
+    opacity: 0;
+}
+
+.chart-tooltip-group {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.chart-tooltip-bg {
+    fill: var(--bg-secondary);
+    stroke: var(--accent-gold);
+    stroke-width: 1.5;
+    rx: 8;
+    ry: 8;
+}
+
+.chart-tooltip-text {
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--text-primary);
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.legend-color.gold { background-color: var(--chart-line-gold); }
+.legend-color.silver { background-color: var(--chart-line-silver); }
+
+/* Switch for chart toggle options */
+.chart-selectors {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.chart-select-btn {
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.chart-select-btn.active {
+    background: var(--accent-gold);
+    color: #ffffff;
+    border-color: var(--accent-gold);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 12px;
+    }
+    
+    header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+        padding: 16px;
+    }
+    
+    .controls-group {
+        justify-content: space-between;
+    }
+    
+    .price-display .price-val {
+        font-size: 26px;
+    }
+    
+    .bb-table th, .bb-table td {
+        padding: 10px 8px;
+        font-size: 14px;
+    }
+    
+    .bb-table td:nth-child(2), .bb-table td:nth-child(3) {
+        font-size: 15px;
+    }
+    
+    .spot-box {
+        min-width: 65px;
+        padding: 4px 8px;
+    }
+    
+    .spot-box span:first-child {
+        font-size: 13px;
+    }
+    
+    .chart-container {
+        height: 240px;
+    }
+}
