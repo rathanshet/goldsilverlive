@@ -2,11 +2,11 @@
 const state = {
     // Current base rates per gram in INR
     rates: {
-        gold24k: 7350.25,
-        gold22k: 6737.50,
-        gold18k: 5512.75,
-        silver999: 92.15,
-        silver925: 85.24
+        gold24k: 14736.60,
+        gold22k: 13507.57,
+        gold18k: 11052.45,
+        silver999: 230.675,
+        silver925: 213.374
     },
     // Historical rates for charts (Simulated datasets)
     history: {
@@ -264,6 +264,93 @@ function updateUI(metalChanged = null, diffs = {}) {
     }
 }
 
+// Helper to recalculate all billboard and commodity values based on current rates
+function updateDerivedRates(goldSpotUSD = null, silverSpotUSD = null, usdINR = null) {
+    const gold24k = state.rates.gold24k;
+    const silver999 = state.rates.silver999;
+    const currentUsdINR = usdINR || state.commodities.inrSpot.bid;
+    
+    // Update billboard products (INR per 10g for gold, INR per 1kg for silver)
+    state.billboard['g999-1kg'].buy = gold24k * 10;
+    state.billboard['g999-1kg'].sell = state.billboard['g999-1kg'].buy + 387;
+    
+    state.billboard['g999-200g'].buy = gold24k * 10 * 0.998;
+    state.billboard['g999-200g'].sell = state.billboard['g999-200g'].buy + 721;
+    
+    state.billboard['ind-1kg'].buy = gold24k * 10 * 0.997;
+    state.billboard['ind-1kg'].sell = state.billboard['ind-1kg'].buy + 592;
+    
+    state.billboard['ind-200g'].buy = gold24k * 10 * 0.997;
+    state.billboard['ind-200g'].sell = state.billboard['ind-200g'].buy + 618;
+    
+    state.billboard['sil-30kg'].buy = silver999 * 1000;
+    state.billboard['sil-30kg'].sell = state.billboard['sil-30kg'].buy + 1289;
+    
+    state.billboard['sil-5kg'].buy = silver999 * 1000 * 0.999;
+    state.billboard['sil-5kg'].sell = state.billboard['sil-5kg'].buy + 1495;
+    
+    state.billboard['995-1kg'].buy = gold24k * 10 * 0.991;
+    state.billboard['995-1kg'].sell = state.billboard['995-1kg'].buy + 850;
+    
+    state.billboard['gold-mkt'].buy = gold24k * 10 * 0.967;
+    state.billboard['gold-mkt'].sell = state.billboard['gold-mkt'].buy + 593;
+    
+    state.billboard['silver-mkt'].buy = silver999 * 1000 * 0.973;
+    state.billboard['silver-mkt'].sell = state.billboard['silver-mkt'].buy + 7475;
+    
+    // Update commodities panel
+    state.commodities.goldFut.bid = gold24k * 10 * 0.982;
+    state.commodities.goldFut.ask = state.commodities.goldFut.bid + 33;
+    if (state.commodities.goldFut.bid > state.commodities.goldFut.high) state.commodities.goldFut.high = state.commodities.goldFut.bid;
+    if (state.commodities.goldFut.bid < state.commodities.goldFut.low) state.commodities.goldFut.low = state.commodities.goldFut.bid;
+    
+    state.commodities.silverFut.bid = silver999 * 1000 * 0.974;
+    state.commodities.silverFut.ask = state.commodities.silverFut.bid + 96;
+    if (state.commodities.silverFut.bid > state.commodities.silverFut.high) state.commodities.silverFut.high = state.commodities.silverFut.bid;
+    if (state.commodities.silverFut.bid < state.commodities.silverFut.low) state.commodities.silverFut.low = state.commodities.silverFut.bid;
+    
+    if (goldSpotUSD !== null) {
+        state.commodities.goldSpot.bid = goldSpotUSD;
+        state.commodities.goldSpot.ask = goldSpotUSD + 0.08;
+        if (state.commodities.goldSpot.bid > state.commodities.goldSpot.high) state.commodities.goldSpot.high = state.commodities.goldSpot.bid;
+        if (state.commodities.goldSpot.bid < state.commodities.goldSpot.low) state.commodities.goldSpot.low = state.commodities.goldSpot.bid;
+    } else if (currentUsdINR > 0) {
+        const spotGoldUSD = (gold24k / 1.188) * 31.1034768 / currentUsdINR;
+        state.commodities.goldSpot.bid = spotGoldUSD;
+        state.commodities.goldSpot.ask = spotGoldUSD + 0.08;
+        if (state.commodities.goldSpot.bid > state.commodities.goldSpot.high) state.commodities.goldSpot.high = state.commodities.goldSpot.bid;
+        if (state.commodities.goldSpot.bid < state.commodities.goldSpot.low) state.commodities.goldSpot.low = state.commodities.goldSpot.bid;
+    }
+    
+    if (silverSpotUSD !== null) {
+        state.commodities.silverSpot.bid = silverSpotUSD;
+        state.commodities.silverSpot.ask = silverSpotUSD + 0.03;
+        if (state.commodities.silverSpot.bid > state.commodities.silverSpot.high) state.commodities.silverSpot.high = state.commodities.silverSpot.bid;
+        if (state.commodities.silverSpot.bid < state.commodities.silverSpot.low) state.commodities.silverSpot.low = state.commodities.silverSpot.bid;
+    } else if (currentUsdINR > 0) {
+        const spotSilverUSD = (silver999 / 1.238) * 31.1034768 / currentUsdINR;
+        state.commodities.silverSpot.bid = spotSilverUSD;
+        state.commodities.silverSpot.ask = spotSilverUSD + 0.03;
+        if (state.commodities.silverSpot.bid > state.commodities.silverSpot.high) state.commodities.silverSpot.high = state.commodities.silverSpot.bid;
+        if (state.commodities.silverSpot.bid < state.commodities.silverSpot.low) state.commodities.silverSpot.low = state.commodities.silverSpot.bid;
+    }
+    
+    state.commodities.inrSpot.bid = currentUsdINR;
+    state.commodities.inrSpot.ask = currentUsdINR + 0.01;
+    if (state.commodities.inrSpot.bid > state.commodities.inrSpot.high) state.commodities.inrSpot.high = state.commodities.inrSpot.bid;
+    if (state.commodities.inrSpot.bid < state.commodities.inrSpot.low) state.commodities.inrSpot.low = state.commodities.inrSpot.bid;
+    
+    state.commodities.goldNext.bid = gold24k * 10 * 1.005;
+    state.commodities.goldNext.ask = state.commodities.goldNext.bid + 66;
+    if (state.commodities.goldNext.bid > state.commodities.goldNext.high) state.commodities.goldNext.high = state.commodities.goldNext.bid;
+    if (state.commodities.goldNext.bid < state.commodities.goldNext.low) state.commodities.goldNext.low = state.commodities.goldNext.bid;
+    
+    state.commodities.silverNext.bid = silver999 * 1000 * 0.991;
+    state.commodities.silverNext.ask = state.commodities.silverNext.bid + 100;
+    if (state.commodities.silverNext.bid > state.commodities.silverNext.high) state.commodities.silverNext.high = state.commodities.silverNext.bid;
+    if (state.commodities.silverNext.bid < state.commodities.silverNext.low) state.commodities.silverNext.low = state.commodities.silverNext.bid;
+}
+
 // Fetch live rates from real-time API
 async function fetchLivePrices() {
     try {
@@ -292,69 +379,8 @@ async function fetchLivePrices() {
             state.rates.silver999 = silver999;
             state.rates.silver925 = silver999 * 0.925;
             
-            // Update billboard products (INR per 10g for gold, INR per 1kg for silver)
-            state.billboard['g999-1kg'].buy = gold24k * 10;
-            state.billboard['g999-1kg'].sell = state.billboard['g999-1kg'].buy + 387;
-            
-            state.billboard['g999-200g'].buy = gold24k * 10 * 0.998;
-            state.billboard['g999-200g'].sell = state.billboard['g999-200g'].buy + 721;
-            
-            state.billboard['ind-1kg'].buy = gold24k * 10 * 0.997;
-            state.billboard['ind-1kg'].sell = state.billboard['ind-1kg'].buy + 592;
-            
-            state.billboard['ind-200g'].buy = gold24k * 10 * 0.997;
-            state.billboard['ind-200g'].sell = state.billboard['ind-200g'].buy + 618;
-            
-            state.billboard['sil-30kg'].buy = silver999 * 1000;
-            state.billboard['sil-30kg'].sell = state.billboard['sil-30kg'].buy + 1289;
-            
-            state.billboard['sil-5kg'].buy = silver999 * 1000 * 0.999;
-            state.billboard['sil-5kg'].sell = state.billboard['sil-5kg'].buy + 1495;
-            
-            state.billboard['995-1kg'].buy = gold24k * 10 * 0.991;
-            state.billboard['995-1kg'].sell = state.billboard['995-1kg'].buy + 850;
-            
-            state.billboard['gold-mkt'].buy = gold24k * 10 * 0.967;
-            state.billboard['gold-mkt'].sell = state.billboard['gold-mkt'].buy + 593;
-            
-            state.billboard['silver-mkt'].buy = silver999 * 1000 * 0.973;
-            state.billboard['silver-mkt'].sell = state.billboard['silver-mkt'].buy + 7475;
-            
-            // Update commodities panel
-            state.commodities.goldFut.bid = gold24k * 10 * 0.982;
-            state.commodities.goldFut.ask = state.commodities.goldFut.bid + 33;
-            if (state.commodities.goldFut.bid > state.commodities.goldFut.high) state.commodities.goldFut.high = state.commodities.goldFut.bid;
-            if (state.commodities.goldFut.bid < state.commodities.goldFut.low) state.commodities.goldFut.low = state.commodities.goldFut.bid;
-            
-            state.commodities.silverFut.bid = silver999 * 1000 * 0.974;
-            state.commodities.silverFut.ask = state.commodities.silverFut.bid + 96;
-            if (state.commodities.silverFut.bid > state.commodities.silverFut.high) state.commodities.silverFut.high = state.commodities.silverFut.bid;
-            if (state.commodities.silverFut.bid < state.commodities.silverFut.low) state.commodities.silverFut.low = state.commodities.silverFut.bid;
-            
-            state.commodities.goldSpot.bid = goldSpotUSD;
-            state.commodities.goldSpot.ask = goldSpotUSD + 0.08;
-            if (state.commodities.goldSpot.bid > state.commodities.goldSpot.high) state.commodities.goldSpot.high = state.commodities.goldSpot.bid;
-            if (state.commodities.goldSpot.bid < state.commodities.goldSpot.low) state.commodities.goldSpot.low = state.commodities.goldSpot.bid;
-            
-            state.commodities.silverSpot.bid = silverSpotUSD;
-            state.commodities.silverSpot.ask = silverSpotUSD + 0.03;
-            if (state.commodities.silverSpot.bid > state.commodities.silverSpot.high) state.commodities.silverSpot.high = state.commodities.silverSpot.bid;
-            if (state.commodities.silverSpot.bid < state.commodities.silverSpot.low) state.commodities.silverSpot.low = state.commodities.silverSpot.bid;
-            
-            state.commodities.inrSpot.bid = usdINR;
-            state.commodities.inrSpot.ask = usdINR + 0.01;
-            if (state.commodities.inrSpot.bid > state.commodities.inrSpot.high) state.commodities.inrSpot.high = state.commodities.inrSpot.bid;
-            if (state.commodities.inrSpot.bid < state.commodities.inrSpot.low) state.commodities.inrSpot.low = state.commodities.inrSpot.bid;
-            
-            state.commodities.goldNext.bid = gold24k * 10 * 1.005;
-            state.commodities.goldNext.ask = state.commodities.goldNext.bid + 66;
-            if (state.commodities.goldNext.bid > state.commodities.goldNext.high) state.commodities.goldNext.high = state.commodities.goldNext.bid;
-            if (state.commodities.goldNext.bid < state.commodities.goldNext.low) state.commodities.goldNext.low = state.commodities.goldNext.bid;
-            
-            state.commodities.silverNext.bid = silver999 * 1000 * 0.991;
-            state.commodities.silverNext.ask = state.commodities.silverNext.bid + 100;
-            if (state.commodities.silverNext.bid > state.commodities.silverNext.high) state.commodities.silverNext.high = state.commodities.silverNext.bid;
-            if (state.commodities.silverNext.bid < state.commodities.silverNext.low) state.commodities.silverNext.low = state.commodities.silverNext.bid;
+            // Recalculate derived rates
+            updateDerivedRates(goldSpotUSD, silverSpotUSD, usdINR);
             
             // Recalculate calculator and update UI
             calculatePurityPrice();
@@ -393,25 +419,8 @@ function startPriceSimulation() {
             metalChanged = 'gold';
             diffs.gold = change;
             
-            // Fluctuate billboard gold prices
-            for (const key of ['g999-1kg', 'g999-200g', 'ind-1kg', 'ind-200g', '995-1kg', 'gold-mkt']) {
-                const changeAmt = (Math.random() - 0.5) * 20;
-                state.billboard[key].buy = Math.max(100000, state.billboard[key].buy + changeAmt);
-                state.billboard[key].sell = state.billboard[key].buy + 387 + (Math.random() * 50);
-            }
-            
-            // Fluctuate futures & spot
-            const goldFutChange = (Math.random() - 0.5) * 30;
-            state.commodities.goldFut.bid = Math.round(state.commodities.goldFut.bid + goldFutChange);
-            state.commodities.goldFut.ask = state.commodities.goldFut.bid + 33;
-            
-            const goldSpotChange = (Math.random() - 0.5) * 0.80;
-            state.commodities.goldSpot.bid = state.commodities.goldSpot.bid + goldSpotChange;
-            state.commodities.goldSpot.ask = state.commodities.goldSpot.bid + 0.08;
-            
-            const goldNextChange = (Math.random() - 0.5) * 30;
-            state.commodities.goldNext.bid = Math.round(state.commodities.goldNext.bid + goldNextChange);
-            state.commodities.goldNext.ask = state.commodities.goldNext.bid + 66;
+            // Update all derived values synchronously
+            updateDerivedRates();
             
         } else if (rand < 0.90) {
             // Fluctuate Silver
@@ -421,30 +430,16 @@ function startPriceSimulation() {
             metalChanged = 'silver';
             diffs.silver = change;
             
-            // Fluctuate billboard silver prices
-            for (const key of ['sil-30kg', 'sil-5kg', 'silver-mkt']) {
-                const changeAmt = (Math.random() - 0.5) * 50;
-                state.billboard[key].buy = Math.max(180000, state.billboard[key].buy + changeAmt);
-                state.billboard[key].sell = state.billboard[key].buy + 1289 + (Math.random() * 100);
-            }
+            // Update all derived values synchronously
+            updateDerivedRates();
             
-            // Fluctuate futures & spot
-            const silFutChange = (Math.random() - 0.5) * 50;
-            state.commodities.silverFut.bid = Math.round(state.commodities.silverFut.bid + silFutChange);
-            state.commodities.silverFut.ask = state.commodities.silverFut.bid + 96;
-            
-            const silSpotChange = (Math.random() - 0.5) * 0.03;
-            state.commodities.silverSpot.bid = state.commodities.silverSpot.bid + silSpotChange;
-            state.commodities.silverSpot.ask = state.commodities.silverSpot.bid + 0.03;
-            
-            const silNextChange = (Math.random() - 0.5) * 50;
-            state.commodities.silverNext.bid = Math.round(state.commodities.silverNext.bid + silNextChange);
-            state.commodities.silverNext.ask = state.commodities.silverNext.bid + 100;
         } else {
             // Fluctuate USD INR spot slightly
             const change = (Math.random() - 0.5) * 0.02;
-            state.commodities.inrSpot.bid = Math.max(80, state.commodities.inrSpot.bid + change);
-            state.commodities.inrSpot.ask = state.commodities.inrSpot.bid + 0.01;
+            const newInr = Math.max(80, state.commodities.inrSpot.bid + change);
+            
+            // Update derived rates using the new exchange rate
+            updateDerivedRates(null, null, newInr);
         }
         
         // Push a new tick onto 24H history and shift
