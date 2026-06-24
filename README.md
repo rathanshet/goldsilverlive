@@ -2,6 +2,10 @@
 
 A stunning, real-time Progressive Web App (PWA) and hybrid mobile application to track daily Gold and Silver prices in Indian Rupees (INR). Fully responsive, featuring a dual-mode layout that toggles between a **Premium Consumer Dashboard** and a **Classic Bullion Billboard** trading screen.
 
+## 🔗 Live Application
+Access the live web app on any laptop, phone, or browser:
+👉 **[https://rathanshet.github.io/goldsilverlive/](https://rathanshet.github.io/goldsilverlive/)**
+
 ---
 
 ## 📸 Screenshots
