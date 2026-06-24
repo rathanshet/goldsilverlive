@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Gold & Silver Rates India | Real-time 24kt & 22kt Prices</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Check real-time live Gold and Silver prices in Indian Rupees (INR). Monitor purity rates for 24kt, 22kt, 18kt gold, and 999/925 silver with custom GST calculators and interactive trend charts.">
+    <meta name="keywords" content="gold rate today, silver price today, 22k gold price, 24k gold price, live bullion rates, MCX gold price, gold rate calculator, India gold price">
+    <meta name="author" content="Antigravity Bullion">
+    
+    <!-- Open Graph for Social Sharing -->
+    <meta property="og:title" content="Live Gold & Silver Rates India">
+    <meta property="og:description" content="Real-time gold and silver pricing in Indian Rupees based on purity (24K, 22K, 18K). Dual layout: Premium Dashboard & Classic Bullion Billboard.">
+    <meta property="og:type" content="website">
+    
+    <!-- PWA Theme Color -->
+    <meta name="theme-color" content="#eab308">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- FontAwesome & Custom Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- App Header -->
+        <header>
+            <div class="logo-section">
+                <i class="fa-solid fa-gem logo-icon"></i>
+                <div class="logo-text">Live<span>Rates</span></div>
+            </div>
+            
+            <div class="controls-group">
+                <div class="market-badge">
+                    <span class="market-dot"></span>
+                    <span id="market-status-text">LIVE MARKET: OPEN</span>
+                </div>
+                
+                <button class="view-toggle-btn" id="view-toggle-btn" aria-label="Toggle View Mode">
+                    <i class="fa-solid fa-table-cells"></i>
+                    <span id="view-toggle-text">Classic Board</span>
+                </button>
+                
+                <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle Dark/Light Theme">
+                    <i class="fa-solid fa-sun" id="theme-icon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- ==========================================
+             1. MODERN PREMIUM DASHBOARD VIEW
+             ========================================== -->
+        <div class="dashboard-view" id="dashboard-view">
+            
+            <!-- Price Cards Grid -->
+            <div class="price-grid">
+                
+                <!-- Gold 24K Card -->
+                <div class="price-card gold-24k" id="card-gold24">
+                    <div class="card-header">
+                        <span class="metal-badge">Gold 24K</span>
+                        <i class="fa-solid fa-bars-staggered card-icon"></i>
+                    </div>
+                    <div class="price-display">
+                        <div class="price-title">Pure Gold (99.9% / g)</div>
+                        <div class="price-val" id="val-g24">₹Loading...</div>
+                    </div>
+                    <div class="price-trend" id="trend-g24">
+                        <i class="fa-solid fa-arrows-up-down"></i> <span>Initializing...</span>
+                    </div>
+                    <div class="card-breakdown">
+                        <div class="breakdown-row">
+                            <span>Per Tola (10g)</span>
+                            <span id="val-g24-tola">₹--</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Per Sovereign (8g)</span>
+                            <span id="val-g24-8g">₹--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gold 22K Card -->
+                <div class="price-card gold-22k" id="card-gold22">
+                    <div class="card-header">
+                        <span class="metal-badge">Gold 22K</span>
+                        <i class="fa-solid fa-ring card-icon"></i>
+                    </div>
+                    <div class="price-display">
+                        <div class="price-title">Jewellery Gold (91.6% / g)</div>
+                        <div class="price-val" id="val-g22">₹Loading...</div>
+                    </div>
+                    <div class="price-trend" id="trend-g22">
+                        <i class="fa-solid fa-arrows-up-down"></i> <span>Initializing...</span>
+                    </div>
+                    <div class="card-breakdown">
+                        <div class="breakdown-row">
+                            <span>Per Tola (10g)</span>
+                            <span id="val-g22-tola">₹--</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Per Sovereign (8g)</span>
+                            <span id="val-g22-8g">₹--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Silver Card -->
+                <div class="price-card silver-999" id="card-silver">
+                    <div class="card-header">
+                        <span class="metal-badge">Silver 999</span>
+                        <i class="fa-solid fa-coins card-icon"></i>
+                    </div>
+                    <div class="price-display">
+                        <div class="price-title">Pure Silver (99.9% / g)</div>
+                        <div class="price-val" id="val-silver">₹Loading...</div>
+                    </div>
+                    <div class="price-trend" id="trend-silver">
+                        <i class="fa-solid fa-arrows-up-down"></i> <span>Initializing...</span>
+                    </div>
+                    <div class="card-breakdown">
+                        <div class="breakdown-row">
+                            <span>Sterling Silver (925 / g)</span>
+                            <span id="val-silver925">₹--</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Per Kilogram (1kg)</span>
+                            <span id="val-silver-1kg">₹--</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Panel: Graph & Calculator -->
+            <div class="main-dashboard-grid">
+                
+                <!-- Price Trend Line Chart -->
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-chart-line"></i> Market Trends & History
+                    </div>
+                    <div class="chart-selectors">
+                        <button class="chart-select-btn active" data-range="24H">24H Live</button>
+                        <button class="chart-select-btn" data-range="7D">7 Days</button>
+                        <button class="chart-select-btn" data-range="30D">30 Days</button>
+                    </div>
+                    <div class="chart-container">
+                        <!-- Custom SVG Chart will be injected here -->
+                        <div id="chart-mount" class="chart-placeholder">
+                            Loading charts...
+                        </div>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-color gold"></span>
+                            <span>Gold (24K)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color silver"></span>
+                            <span>Silver (999)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gold & Silver Calculator -->
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-calculator"></i> Purity Price Calculator
+                    </div>
+                    <div class="calc-form">
+                        <div class="form-group">
+                            <label class="form-label" for="calc-metal">Metal Type</label>
+                            <select class="calc-select" id="calc-metal">
+                                <option value="gold">Gold (₹/gram)</option>
+                                <option value="silver">Silver (₹/gram)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="calc-purity">Purity Grade</label>
+                            <select class="calc-select" id="calc-purity">
+                                <!-- Options populated dynamically depending on metal selection -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="calc-weight">Weight (Grams)</label>
+                            <div class="input-container">
+                                <i class="fa-solid fa-weight-hanging input-icon-prefix"></i>
+                                <input class="calc-input" type="number" id="calc-weight" value="10" min="0.1" step="0.1">
+                                <span class="input-icon-suffix">gm</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="calc-making">Making Charges</label>
+                            <div style="display: flex; gap: 8px;">
+                                <div class="input-container" style="flex: 1.3;">
+                                    <i class="fa-solid fa-screwdriver-wrench input-icon-prefix"></i>
+                                    <input class="calc-input" type="number" id="calc-making" value="8" min="0">
+                                </div>
+                                <select class="calc-select" id="calc-making-type" style="flex: 0.7; padding: 12px 10px;">
+                                    <option value="percent">% (Percent)</option>
+                                    <option value="fixed">₹/gram (Fixed)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Calculations Output Receipt -->
+                        <div class="calc-receipt">
+                            <div class="receipt-row">
+                                <span>Metal Rate</span>
+                                <span id="rec-metal-rate">₹-- / gm</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>Metal Cost</span>
+                                <span id="rec-metal-cost">₹--</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>Making Charges</span>
+                                <span id="rec-making">₹--</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span>GST (3%)</span>
+                                <span id="rec-gst">₹--</span>
+                            </div>
+                            <div class="receipt-row receipt-total">
+                                <span>Total Price (INR)</span>
+                                <span id="rec-total">₹--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+             2. CLASSIC BULLION BOARD VIEW
+             ========================================== -->
+        <div class="billboard-view" id="billboard-view">
+            
+            <div class="billboard-header">
+                <div>Care : 9148546095 (Bullion) 910888988 (Coins)</div>
+                <div style="color: #aa8c2c; font-size: 20px;">BULLION LIVE BOARD</div>
+            </div>
+
+            <div class="billboard-layout">
+                
+                <!-- Left Section: Gold Products Table -->
+                <div class="billboard-table-card">
+                    <table class="bb-table">
+                        <thead>
+                            <tr>
+                                <th>GOLD PRODUCT</th>
+                                <th>BUY</th>
+                                <th>SELL</th>
+                                <th>STOCK</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="row-999-1kg">
+                                <td>999-iMP-GOLD-1KG-today</td>
+                                <td id="buy-g999-1kg">147366</td>
+                                <td id="sell-g999-1kg">147753</td>
+                                <td><span class="stock-indicator in-stock"><i class="fa-solid fa-check"></i></span></td>
+                            </tr>
+                            <tr id="row-999-200g">
+                                <td>999 iMP-GOLD200GMS-today</td>
+                                <td id="buy-g999-200g">147056</td>
+                                <td id="sell-g999-200g">147777</td>
+                                <td><span class="stock-indicator in-stock"><i class="fa-solid fa-check"></i></span></td>
+                            </tr>
+                            <tr id="row-ind-1kg">
+                                <td>IND-GOLD[999]-1KG -today</td>
+                                <td id="buy-ind-1kg">146953</td>
+                                <td id="sell-ind-1kg">147545</td>
+                                <td><span class="stock-indicator in-stock"><i class="fa-solid fa-check"></i></span></td>
+                            </tr>
+                            <tr id="row-ind-200g">
+                                <td>iND-GOLD[999]200GMS-today</td>
+                                <td id="buy-ind-200g">146953</td>
+                                <td id="sell-ind-200g">147571</td>
+                                <td><span class="stock-indicator in-stock"><i class="fa-solid fa-check"></i></span></td>
+                            </tr>
+                            <tr id="row-sil-30kg">
+                                <td>SILVER{999}- 30kg[tom]</td>
+                                <td id="buy-sil-30kg">230675</td>
+                                <td id="sell-sil-30kg">231964</td>
+                                <td><span class="stock-indicator in-stock"><i class="fa-solid fa-check"></i></span></td>
+                            </tr>
+                            <tr id="row-sil-5kg">
+                                <td>M-SILVER[999]5kg[tom]</td>
+                                <td id="buy-sil-5kg">230674</td>
+                                <td id="sell-sil-5kg">232169</td>
+                                <td><span class="stock-indicator in-stock"><i class="fa-solid fa-check"></i></span></td>
+                            </tr>
+                            <tr id="row-995-1kg">
+                                <td>995 GOLD BAR-1KG</td>
+                                <td id="buy-995-1kg">146129</td>
+                                <td id="sell-995-1kg">146979</td>
+                                <td><span class="stock-indicator out-of-stock"><i class="fa-solid fa-xmark"></i></span></td>
+                            </tr>
+                            <tr id="row-gold-mkt">
+                                <td>GOLD MKT</td>
+                                <td id="buy-gold-mkt">142622</td>
+                                <td id="sell-gold-mkt">143215</td>
+                                <td><span class="stock-indicator out-of-stock"><i class="fa-solid fa-xmark"></i></span></td>
+                            </tr>
+                            <tr id="row-silver-mkt">
+                                <td>SILVER MKT</td>
+                                <td id="buy-silver-mkt">224488</td>
+                                <td id="sell-silver-mkt">231963</td>
+                                <td><span class="stock-indicator out-of-stock"><i class="fa-solid fa-xmark"></i></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Right Section: Futures, Spot Rates & Extras -->
+                <div class="commodity-group">
+                    
+                    <!-- Futures Card -->
+                    <div class="commodity-card">
+                        <div class="commodity-header">
+                            <span>COMMODITY</span>
+                            <span>BID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ASK</span>
+                        </div>
+                        <div class="commodity-item">
+                            <div class="commodity-name">GOLD FUTURE</div>
+                            <div class="commodity-bid-ask">
+                                <div class="bid-ask-box">
+                                    <span>BID</span>
+                                    <span id="bid-gold-fut">144701</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="high-gold-fut">HIGH/145480</span>
+                                </div>
+                                <div class="bid-ask-box">
+                                    <span>ASK</span>
+                                    <span id="ask-gold-fut">144734</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="low-gold-fut">LOW/144114</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="commodity-item">
+                            <div class="commodity-name">SILVER FUTURE</div>
+                            <div class="commodity-bid-ask">
+                                <div class="bid-ask-box">
+                                    <span>BID</span>
+                                    <span id="bid-silver-fut">224642</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="high-silver-fut">HIGH/227110</span>
+                                </div>
+                                <div class="bid-ask-box">
+                                    <span>ASK</span>
+                                    <span id="ask-silver-fut">224738</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="low-silver-fut">LOW/221658</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spot Card (Green highlight boxes) -->
+                    <div class="spot-grid-row">
+                        <div class="spot-header-row">
+                            <span>COMMODITY</span>
+                            <span style="margin-left: auto; margin-right: 48px;">BID</span>
+                            <span>ASK</span>
+                        </div>
+                        
+                        <!-- Gold Spot -->
+                        <div class="spot-data-row">
+                            <div class="spot-label">GOLD SPOT</div>
+                            <div class="spot-bid-ask-container">
+                                <div class="spot-box green">
+                                    <span id="bid-gold-spot">4073.51</span>
+                                    <span class="spot-range" id="high-gold-spot">H 4115.06</span>
+                                </div>
+                                <div class="spot-box green">
+                                    <span id="ask-gold-spot">4073.59</span>
+                                    <span class="spot-range" id="low-gold-spot">L 4050.54</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Silver Spot -->
+                        <div class="spot-data-row">
+                            <div class="spot-label">SILVER SPOT</div>
+                            <div class="spot-bid-ask-container">
+                                <div class="spot-box green">
+                                    <span id="bid-silver-spot">61.18</span>
+                                    <span class="spot-range" id="high-silver-spot">H 62.37</span>
+                                </div>
+                                <div class="spot-box green">
+                                    <span id="ask-silver-spot">61.21</span>
+                                    <span class="spot-range" id="low-silver-spot">L 60.74</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INR Spot -->
+                        <div class="spot-data-row">
+                            <div class="spot-label">INR SPOT</div>
+                            <div class="spot-bid-ask-container">
+                                <div class="spot-box green">
+                                    <span id="bid-inr-spot">94.67</span>
+                                    <span class="spot-range" id="high-inr-spot">H 94.91</span>
+                                </div>
+                                <div class="spot-box green">
+                                    <span id="ask-inr-spot">94.68</span>
+                                    <span class="spot-range" id="low-inr-spot">L 94.60</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Next Delivery Contracts Card -->
+                    <div class="commodity-card">
+                        <div class="commodity-header">
+                            <span>COMMODITY</span>
+                            <span>BID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ASK</span>
+                        </div>
+                        <div class="commodity-item">
+                            <div class="commodity-name">GOLD NEXT</div>
+                            <div class="commodity-bid-ask">
+                                <div class="bid-ask-box">
+                                    <span>BID</span>
+                                    <span id="bid-gold-next">148076</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="high-gold-next">HIGH/148970</span>
+                                </div>
+                                <div class="bid-ask-box">
+                                    <span>ASK</span>
+                                    <span id="ask-gold-next">148142</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="low-gold-next">LOW/147790</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="commodity-item">
+                            <div class="commodity-name">SILVER NEXT</div>
+                            <div class="commodity-bid-ask">
+                                <div class="bid-ask-box">
+                                    <span>BID</span>
+                                    <span id="bid-silver-next">228702</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="high-silver-next">HIGH/231351</span>
+                                </div>
+                                <div class="bid-ask-box">
+                                    <span>ASK</span>
+                                    <span id="ask-silver-next">228802</span>
+                                    <span style="font-size: 8px; color: #f7e7c4;" id="low-silver-next">LOW/226500</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulletin Board Footer notes -->
+                    <div class="billboard-footer">
+                        <div class="bullet-note">
+                            <i class="fa-solid fa-star"></i>
+                            <span>We sell gold only on RTGS, no cash.</span>
+                        </div>
+                        <div class="bullet-note">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Get doorstep delivery of gold and coins.</span>
+                        </div>
+                        <div class="bullet-note">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Our rates are inclusive of all taxes.</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Main JavaScript Logic -->
+    <script src="app.js"></script>
+    
+    <!-- Service Worker Registration Script -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker Registered Successfully', reg.scope))
+                    .catch(err => console.error('Service Worker Registration Failed', err));
+            });
+        }
+    </script>
+</body>
+</html>

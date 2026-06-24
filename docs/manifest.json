@@ -1,0 +1,18 @@
+{
+  "name": "Live Gold & Silver Price Tracker India",
+  "short_name": "BullionLive",
+  "description": "Real-time daily Gold and Silver prices in India (INR) for 24kt and 22kt purity levels, including tax and making charge calculators.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#090d16",
+  "theme_color": "#eab308",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2681/2681816.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
