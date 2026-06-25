@@ -1,10 +1,10 @@
 // Application State Management
 const state = {
-    // Current base rates per gram in INR (Bangalore market, updated June 25 2026)
+    // Current base rates per gram in INR (Bangalore market, June 25 2026 — user confirmed)
     rates: {
-        gold24k: 14165.00,
-        gold22k: 12975.49,
-        gold18k: 10623.75,
+        gold24k: 14558.90,
+        gold22k: 13343.70,
+        gold18k: 10919.18,
         silver999: 214.29,
         silver925: 198.22
     },
@@ -20,26 +20,26 @@ const state = {
     activeView: 'dashboard',
     // Active theme
     theme: 'dark',
-    // Billboard product prices (BUY/SELL) - Bangalore market June 25 2026
+    // Billboard product prices (BUY/SELL) - Gold ₹1,45,589/10g confirmed by user June 25 2026
     billboard: {
-        'g999-1kg': { buy: 141650, sell: 142037, stock: true },
-        'g999-200g': { buy: 141367, sell: 142088, stock: true },
-        'ind-1kg': { buy: 141227, sell: 141819, stock: true },
-        'ind-200g': { buy: 141227, sell: 141845, stock: true },
+        'g999-1kg': { buy: 145589, sell: 145976, stock: true },
+        'g999-200g': { buy: 145298, sell: 146019, stock: true },
+        'ind-1kg': { buy: 145152, sell: 145744, stock: true },
+        'ind-200g': { buy: 145152, sell: 145770, stock: true },
         'sil-30kg': { buy: 214290, sell: 215579, stock: true },
         'sil-5kg': { buy: 214076, sell: 215571, stock: true },
-        '995-1kg': { buy: 140379, sell: 141229, stock: false },
-        'gold-mkt': { buy: 136962, sell: 137555, stock: false },
+        '995-1kg': { buy: 144278, sell: 145128, stock: false },
+        'gold-mkt': { buy: 140764, sell: 141357, stock: false },
         'silver-mkt': { buy: 208504, sell: 215779, stock: false }
     },
     // Commodities section — Bangalore, June 25 2026
     commodities: {
-        goldFut: { bid: 139022, ask: 139055, high: 141000, low: 138000 },
+        goldFut: { bid: 143028, ask: 143061, high: 145000, low: 141800 },
         silverFut: { bid: 208558, ask: 208654, high: 212000, low: 205000 },
         goldSpot: { bid: 4000.00, ask: 4000.08, high: 4050.00, low: 3970.00 },
         silverSpot: { bid: 57.72, ask: 57.75, high: 59.00, low: 56.80 },
         inrSpot: { bid: 94.65, ask: 94.66, high: 94.90, low: 94.40 },
-        goldNext: { bid: 142397, ask: 142463, high: 143500, low: 141200 },
+        goldNext: { bid: 146365, ask: 146431, high: 147500, low: 145200 },
         silverNext: { bid: 212281, ask: 212381, high: 215500, low: 209500 }
     }
 };
@@ -315,7 +315,7 @@ function updateDerivedRates(goldSpotUSD = null, silverSpotUSD = null, usdINR = n
         if (state.commodities.goldSpot.bid > state.commodities.goldSpot.high) state.commodities.goldSpot.high = state.commodities.goldSpot.bid;
         if (state.commodities.goldSpot.bid < state.commodities.goldSpot.low) state.commodities.goldSpot.low = state.commodities.goldSpot.bid;
     } else if (currentUsdINR > 0) {
-        const spotGoldUSD = (gold24k / 1.1635) * 31.1034768 / currentUsdINR;
+        const spotGoldUSD = (gold24k / 1.1960) * 31.1034768 / currentUsdINR;
         state.commodities.goldSpot.bid = spotGoldUSD;
         state.commodities.goldSpot.ask = spotGoldUSD + 0.08;
         if (state.commodities.goldSpot.bid > state.commodities.goldSpot.high) state.commodities.goldSpot.high = state.commodities.goldSpot.bid;
@@ -367,9 +367,9 @@ async function fetchLivePrices() {
             
             // Calculate base prices in INR per gram
             // Troy ounce = 31.1034768 grams.
-            // Gold premium 16.35% = 15% custom duty + 3% GST - local refining credit — calibrated to Bangalore market ₹14,165/g on June 25 2026
-            // Silver premium 22.0% = 10% import duty + 3% GST + 9% local premium — calibrated to Bangalore market ₹214.29/g on June 25 2026
-            const gold24k = (goldSpotUSD * usdINR / 31.1034768) * 1.1635;
+            // Gold premium 19.60% — calibrated to user-confirmed Bangalore market ₹1,45,589/10g (₹14,558.90/g) on June 25 2026
+            // Silver premium 22.0% = 10% import duty + 3% GST + 9% local premium — calibrated to Bangalore market ₹214.29/g
+            const gold24k = (goldSpotUSD * usdINR / 31.1034768) * 1.1960;
             const silver999 = (silverSpotUSD * usdINR / 31.1034768) * 1.220;
             
             const oldGold = state.rates.gold24k;

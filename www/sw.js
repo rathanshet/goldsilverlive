@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gold-silver-cache-v4';
+const CACHE_NAME = 'gold-silver-cache-v5';
 const assets = [
   './',
   'index.html',
