@@ -1,12 +1,12 @@
 // Application State Management
 const state = {
-    // Current base rates per gram in INR
+    // Current base rates per gram in INR (Shivamogga market, updated June 25 2026)
     rates: {
-        gold24k: 14736.60,
-        gold22k: 13507.57,
-        gold18k: 11052.45,
-        silver999: 230.675,
-        silver925: 213.374
+        gold24k: 14433.00,
+        gold22k: 13220.77,
+        gold18k: 10824.75,
+        silver999: 217.00,
+        silver925: 200.72
     },
     // Historical rates for charts (Simulated datasets)
     history: {
@@ -20,27 +20,27 @@ const state = {
     activeView: 'dashboard',
     // Active theme
     theme: 'dark',
-    // Billboard product prices (BUY/SELL)
+    // Billboard product prices (BUY/SELL) - based on ₹14433/10g gold, ₹217/1kg silver
     billboard: {
-        'g999-1kg': { buy: 147366, sell: 147753, stock: true },
-        'g999-200g': { buy: 147056, sell: 147777, stock: true },
-        'ind-1kg': { buy: 146953, sell: 147545, stock: true },
-        'ind-200g': { buy: 146953, sell: 147571, stock: true },
-        'sil-30kg': { buy: 230675, sell: 231964, stock: true },
-        'sil-5kg': { buy: 230674, sell: 232169, stock: true },
-        '995-1kg': { buy: 146129, sell: 146979, stock: false },
-        'gold-mkt': { buy: 142622, sell: 143215, stock: false },
-        'silver-mkt': { buy: 224488, sell: 231963, stock: false }
+        'g999-1kg': { buy: 144330, sell: 144717, stock: true },
+        'g999-200g': { buy: 144041, sell: 144762, stock: true },
+        'ind-1kg': { buy: 143917, sell: 144509, stock: true },
+        'ind-200g': { buy: 143917, sell: 144535, stock: true },
+        'sil-30kg': { buy: 217000, sell: 218289, stock: true },
+        'sil-5kg': { buy: 216783, sell: 218278, stock: true },
+        '995-1kg': { buy: 143013, sell: 143863, stock: false },
+        'gold-mkt': { buy: 139534, sell: 140127, stock: false },
+        'silver-mkt': { buy: 211141, sell: 218616, stock: false }
     },
-    // Commodities section
+    // Commodities section — based on live values June 25 2026
     commodities: {
-        goldFut: { bid: 144701, ask: 144734, high: 145480, low: 144114 },
-        silverFut: { bid: 224642, ask: 224738, high: 227110, low: 221658 },
-        goldSpot: { bid: 4073.51, ask: 4073.59, high: 4115.06, low: 4050.54 },
-        silverSpot: { bid: 61.18, ask: 61.21, high: 62.37, low: 60.74 },
-        inrSpot: { bid: 94.67, ask: 94.68, high: 94.91, low: 94.60 },
-        goldNext: { bid: 148076, ask: 148142, high: 148970, low: 147790 },
-        silverNext: { bid: 228702, ask: 228802, high: 231351, low: 226500 }
+        goldFut: { bid: 141612, ask: 141645, high: 143000, low: 140500 },
+        silverFut: { bid: 211268, ask: 211364, high: 215000, low: 208000 },
+        goldSpot: { bid: 3998.10, ask: 3998.18, high: 4050.00, low: 3970.00 },
+        silverSpot: { bid: 57.72, ask: 57.75, high: 59.00, low: 56.80 },
+        inrSpot: { bid: 94.65, ask: 94.66, high: 94.90, low: 94.40 },
+        goldNext: { bid: 145050, ask: 145116, high: 146200, low: 143800 },
+        silverNext: { bid: 215003, ask: 215103, high: 218000, low: 212000 }
     }
 };
 
@@ -315,7 +315,7 @@ function updateDerivedRates(goldSpotUSD = null, silverSpotUSD = null, usdINR = n
         if (state.commodities.goldSpot.bid > state.commodities.goldSpot.high) state.commodities.goldSpot.high = state.commodities.goldSpot.bid;
         if (state.commodities.goldSpot.bid < state.commodities.goldSpot.low) state.commodities.goldSpot.low = state.commodities.goldSpot.bid;
     } else if (currentUsdINR > 0) {
-        const spotGoldUSD = (gold24k / 1.188) * 31.1034768 / currentUsdINR;
+        const spotGoldUSD = (gold24k / 1.1862) * 31.1034768 / currentUsdINR;
         state.commodities.goldSpot.bid = spotGoldUSD;
         state.commodities.goldSpot.ask = spotGoldUSD + 0.08;
         if (state.commodities.goldSpot.bid > state.commodities.goldSpot.high) state.commodities.goldSpot.high = state.commodities.goldSpot.bid;
@@ -328,7 +328,7 @@ function updateDerivedRates(goldSpotUSD = null, silverSpotUSD = null, usdINR = n
         if (state.commodities.silverSpot.bid > state.commodities.silverSpot.high) state.commodities.silverSpot.high = state.commodities.silverSpot.bid;
         if (state.commodities.silverSpot.bid < state.commodities.silverSpot.low) state.commodities.silverSpot.low = state.commodities.silverSpot.bid;
     } else if (currentUsdINR > 0) {
-        const spotSilverUSD = (silver999 / 1.238) * 31.1034768 / currentUsdINR;
+        const spotSilverUSD = (silver999 / 1.235) * 31.1034768 / currentUsdINR;
         state.commodities.silverSpot.bid = spotSilverUSD;
         state.commodities.silverSpot.ask = spotSilverUSD + 0.03;
         if (state.commodities.silverSpot.bid > state.commodities.silverSpot.high) state.commodities.silverSpot.high = state.commodities.silverSpot.bid;
@@ -366,9 +366,11 @@ async function fetchLivePrices() {
             const usdINR = exRes.rates.INR;
             
             // Calculate base prices in INR per gram
-            // Troy ounce is 31.1034768 grams. Domestic premium is approx 18.8% for Gold and 23.8% for Silver.
-            const gold24k = (goldSpotUSD * usdINR / 31.1034768) * 1.188;
-            const silver999 = (silverSpotUSD * usdINR / 31.1034768) * 1.238;
+            // Troy ounce = 31.1034768 grams.
+            // Gold premium 18.62% = custom duty (15%) + GST (3%) + local charges (~0.62%) — calibrated to Shivamogga market ₹14,433/g on June 25 2026
+            // Silver premium 23.5% = import duty + GST + local premium — calibrated to ₹217/g on June 25 2026
+            const gold24k = (goldSpotUSD * usdINR / 31.1034768) * 1.1862;
+            const silver999 = (silverSpotUSD * usdINR / 31.1034768) * 1.235;
             
             const oldGold = state.rates.gold24k;
             const oldSilver = state.rates.silver999;
