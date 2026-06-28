@@ -1,12 +1,12 @@
 // Application State Management
 const state = {
-    // Current base rates per gram in INR (Bangalore market, June 25 2026 — user confirmed)
+    // Current base rates per gram in INR (Bangalore market, June 28 2026 — recalibrated)
     rates: {
-        gold24k: 14558.90,
-        gold22k: 13343.70,
-        gold18k: 10919.18,
-        silver999: 227.00,
-        silver925: 209.97
+        gold24k: 14395.00,
+        gold22k: 13194.22,
+        gold18k: 10796.25,
+        silver999: 222.10,
+        silver925: 205.44
     },
     // Historical rates for charts (Simulated datasets)
     history: {
@@ -20,27 +20,27 @@ const state = {
     activeView: 'dashboard',
     // Active theme
     theme: 'dark',
-    // Billboard product prices (BUY/SELL) - Gold ₹1,45,589/10g confirmed by user June 25 2026
+    // Billboard product prices (BUY/SELL) - Gold ₹1,43,950/10g — June 28 2026
     billboard: {
-        'g999-1kg': { buy: 145589, sell: 145976, stock: true },
-        'g999-200g': { buy: 145298, sell: 146019, stock: true },
-        'ind-1kg': { buy: 145152, sell: 145744, stock: true },
-        'ind-200g': { buy: 145152, sell: 145770, stock: true },
-        'sil-30kg': { buy: 227000, sell: 228289, stock: true },
-        'sil-5kg': { buy: 226773, sell: 228268, stock: true },
-        '995-1kg': { buy: 144278, sell: 145128, stock: false },
-        'gold-mkt': { buy: 140764, sell: 141357, stock: false },
-        'silver-mkt': { buy: 220931, sell: 228406, stock: false }
+        'g999-1kg': { buy: 143950, sell: 144337, stock: true },
+        'g999-200g': { buy: 143662, sell: 144383, stock: true },
+        'ind-1kg': { buy: 143519, sell: 144111, stock: true },
+        'ind-200g': { buy: 143519, sell: 144137, stock: true },
+        'sil-30kg': { buy: 222100, sell: 223389, stock: true },
+        'sil-5kg': { buy: 221878, sell: 223373, stock: true },
+        '995-1kg': { buy: 142551, sell: 143401, stock: false },
+        'gold-mkt': { buy: 139188, sell: 139781, stock: false },
+        'silver-mkt': { buy: 216103, sell: 223578, stock: false }
     },
-    // Commodities section — Bangalore, June 25 2026
+    // Commodities section — Bangalore, June 28 2026
     commodities: {
-        goldFut: { bid: 143028, ask: 143061, high: 145000, low: 141800 },
-        silverFut: { bid: 221138, ask: 221234, high: 225000, low: 218000 },
-        goldSpot: { bid: 4000.00, ask: 4000.08, high: 4050.00, low: 3970.00 },
-        silverSpot: { bid: 57.72, ask: 57.75, high: 59.00, low: 56.80 },
-        inrSpot: { bid: 94.65, ask: 94.66, high: 94.90, low: 94.40 },
-        goldNext: { bid: 146365, ask: 146431, high: 147500, low: 145200 },
-        silverNext: { bid: 224857, ask: 224957, high: 228000, low: 222000 }
+        goldFut: { bid: 141361, ask: 141394, high: 143500, low: 140100 },
+        silverFut: { bid: 216325, ask: 216421, high: 220000, low: 213000 },
+        goldSpot: { bid: 4090.60, ask: 4090.68, high: 4100.00, low: 4060.00 },
+        silverSpot: { bid: 59.30, ask: 59.33, high: 60.20, low: 58.50 },
+        inrSpot: { bid: 94.44, ask: 94.45, high: 94.70, low: 94.20 },
+        goldNext: { bid: 144620, ask: 144686, high: 146000, low: 143200 },
+        silverNext: { bid: 220101, ask: 220201, high: 223500, low: 218000 }
     }
 };
 
@@ -367,10 +367,12 @@ async function fetchLivePrices() {
             
             // Calculate base prices in INR per gram
             // Troy ounce = 31.1034768 grams.
-            // Gold premium 19.60% — calibrated to user-confirmed Bangalore market ₹1,45,589/10g (₹14,558.90/g) on June 25 2026
-            // Silver premium 29.21% — calibrated to user-confirmed market ₹227/g on June 25 2026
-            const gold24k = (goldSpotUSD * usdINR / 31.1034768) * 1.1960;
-            const silver999 = (silverSpotUSD * usdINR / 31.1034768) * 1.2921;
+            // Gold premium 15.86% — calibrated to Bangalore market ₹14,395/g on June 28 2026
+            //   Raw at $4090.60, ₹94.44 = ₹12,424/g → × 1.1586 = ₹14,402/g ≈ market
+            // Silver premium 23.35% — calibrated to market ₹222.10/g on June 28 2026
+            //   Raw at $59.298, ₹94.44 = ₹180.06/g → × 1.2335 = ₹222.10/g
+            const gold24k = (goldSpotUSD * usdINR / 31.1034768) * 1.1586;
+            const silver999 = (silverSpotUSD * usdINR / 31.1034768) * 1.2335;
             
             const oldGold = state.rates.gold24k;
             const oldSilver = state.rates.silver999;
